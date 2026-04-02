@@ -1,0 +1,46 @@
+# australia_map_coloring.py
+
+from itertools import product
+
+# Variables (regions)
+regions = ["WA", "NT", "Q", "SA", "NSW", "V", "T"]
+
+# Domains (colors)
+colors = ["Red", "Green", "Blue"]
+
+# Constraints (neighbors)
+neighbors = {
+    "WA": ["NT", "SA"],
+    "NT": ["WA", "SA", "Q"],
+    "SA": ["WA", "NT", "Q", "NSW", "V"],
+    "Q": ["NT", "SA", "NSW"],
+    "NSW": ["Q", "SA", "V"],
+    "V": ["SA", "NSW"],
+    "T": []
+}
+
+def is_valid(assignment, region, color):
+    for neighbor in neighbors[region]:
+        if neighbor in assignment and assignment[neighbor] == color:
+            return False
+    return True
+
+def backtrack(assignment):
+    if len(assignment) == len(regions):
+        return assignment
+
+    unassigned = [r for r in regions if r not in assignment][0]
+
+    for color in colors:
+        if is_valid(assignment, unassigned, color):
+            assignment[unassigned] = color
+            result = backtrack(assignment)
+            if result:
+                return result
+            del assignment[unassigned]
+
+    return None
+
+solution = backtrack({})
+print("Australia Map Coloring Solution:")
+print(solution)
